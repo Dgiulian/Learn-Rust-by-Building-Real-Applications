@@ -1,4 +1,7 @@
+use crate::http::{request, Request};
+use std::convert::TryFrom;
 use std::{io::Read, net::TcpListener};
+
 pub struct Server {
     addr: String,
 }
@@ -27,6 +30,12 @@ impl Server {
                         }
                         Ok(_) => {
                             println!("Received a request: {}", String::from_utf8_lossy(&buf));
+                            match Request::try_from(&buf[..]) {
+                                Err(err) => println!("Failed to parse request, {}", err),
+                                Ok(request) => {
+                                    dbg!(request);
+                                }
+                            }
                         }
                     }
                 }
